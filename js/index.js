@@ -10,7 +10,7 @@ $(document).ready(async function () {
 
         return new Promise(async (resolve, reject) => {
        
-            var fileUrl = "https://ricardogithubb.github.io/shoppingafiliados23/produtos.csv";
+            var fileUrl = "https://shoppingafiliados23.github.io/shopee/produtos.csv";
 
             await $.get(fileUrl, function(data) {
                 var lines = data.split("\n");
