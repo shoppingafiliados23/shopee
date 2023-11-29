@@ -4,7 +4,7 @@ $(document).ready(async function () {
 
     await baseDados();
 
-    await listarProdutos();
+    await listarProdutos(0);
 
     function baseDados(){
 
@@ -21,13 +21,14 @@ $(document).ready(async function () {
                 lines.forEach(function(line) {
                 line = line.replace(/\r/g, "");
                 var lineElement = line.split(';');
+                    var numero  = lineElement[0].replace(/[^0-9]/g, '');
                     var produto = lineElement[0];
                     var nome = lineElement[1];
                     var imagem = lineElement[2];
                     var link = lineElement[3];
                     var status = lineElement[4];
 
-                produtos.registros.push({ produto: produto, nome: nome, imagem: imagem, link: link, status: status});
+                produtos.registros.push({ numero: numero,produto: produto, nome: nome, imagem: imagem, link: link, status: status});
                 
                 });
 
@@ -39,37 +40,59 @@ $(document).ready(async function () {
         })
 
     }
+
+    $("#numProd").keyup(function (e) { 
+        
+        if($("#numProd").val().length == 0){
+            listarProdutos(0); 
+        } else {
+            listarProdutos($("#numProd").val());
+        }
+        
+    });
     
     
-    function listarProdutos(){
+    function listarProdutos(pNumProd){
         
         let listProdutos = '';
 
+        var p = 1;
+
         return new Promise(async (resolve, reject) => {
 
-            for (let index = 0; index < produtos.registros.length; index++) {
+            if(pNumProd === 0){
+                var filtrarRegistros = produtos.registros;
+            } else {
+                var filtrarRegistros = produtos.registros.filter(function(produtos) {
+                    return produtos.numero.startsWith(pNumProd);
+                });
+            }
 
-                var nomeProd = produtos.registros[index].nome;
+            console.log(filtrarRegistros);
+
+            for (let index = 0; index < filtrarRegistros.length; index++) {
+
+                var nomeProd = filtrarRegistros[index].nome;
                 
-                if(produtos.registros[index].status = 'Ativo'){
+                if(filtrarRegistros[index].status = 'Ativo'){
 
                     if((index%2) == 0){
                         listProdutos += `<div class="row mx-2 px-2">
                                             <div class="col-6 ps-2 pe-1 py-1 ">
-                                                <div class="card" style="width: 100%" onclick="window.open('${produtos.registros[index].link}','_blank')">
-                                                    <img src="img_prod/${produtos.registros[index].imagem}" class="card-img-top" alt="...">
+                                                <div class="card" style="width: 100%" onclick="window.open('${filtrarRegistros[index].link}','_blank')">
+                                                    <img src="img_prod/${filtrarRegistros[index].imagem}" class="card-img-top" alt="...">
                                                     <div class="card-body border p-0">
-                                                        <h5 class="card-title ps-1 m-0">${produtos.registros[index].produto}</h5>
+                                                        <h5 class="card-title ps-1 m-0">${filtrarRegistros[index].produto}</h5>
                                                         <p class="card-text ps-1 p-0 m-0">${nomeProd.substring(0, 15)}...</p>
                                                     </div>
                                                 </div>
                                             </div>`;
                     } else {
                         listProdutos += `<div class="col-6 ps-1 pe-2 py-1">
-                                                <div class="card"  style="width: 100%" onclick="window.open('${produtos.registros[index].link}','_blank')">
-                                                    <img src="img_prod/${produtos.registros[index].imagem}" class="card-img-top" alt="...">
+                                                <div class="card"  style="width: 100%" onclick="window.open('${filtrarRegistros[index].link}','_blank')">
+                                                    <img src="img_prod/${filtrarRegistros[index].imagem}" class="card-img-top" alt="...">
                                                     <div class="card-body border p-0">
-                                                        <h5 class="card-title ps-1 m-0">${produtos.registros[index].produto}</h5>
+                                                        <h5 class="card-title ps-1 m-0">${filtrarRegistros[index].produto}</h5>
                                                         <p class="card-text ps-1 p-0 m-0">${nomeProd.substring(0, 15)}...</p>
                                                     </div>
                                                 </div>
